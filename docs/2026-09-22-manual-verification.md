@@ -34,61 +34,32 @@ The five sanitized probes (`GET /api/stats`, `/api/tags`, `/api/memories?page=1&
 `x-opencode-mem-token` header and returned HTTP 401 without it, against the process that
 was running on 2026-09-22. See `docs/2026-09-22-opencode-mem-http-contract.md`.
 
-## Steps 2–6 — Interactive OpenChamber verification (NOT EXECUTED — user action required)
+## Steps 2–6 — Interactive OpenChamber verification (EXTRACTED 2026-09-23)
 
-These steps drive the OpenChamber desktop UI (Settings → Extensions, rail panel,
-Extension pages menu) and cannot be completed from inside the hosting agent session.
-The agent session runs inside the OpenCode process that hosts the live `opencode-mem`
-service; restarting that process to perform the deferred Task 1 Step 5 re-probe would
-terminate the session, so both the install walkthrough and the post-restart probe are
-deferred to the user. Nothing below has been executed or observed by the agent.
+The interactive checklist previously recorded in this section was extracted to
+`docs/2026-09-23-retest-checklist.md` (items R2–R7). Nothing in that checklist
+has been executed or observed by the agent; the agent session runs inside the
+OpenCode process that hosts the live `opencode-mem` service and cannot drive
+the OpenChamber desktop UI.
 
-Checklist for the user (expected results in parentheses):
+## Task 1 Step 5 second probe — after normal restart (EXTRACTED 2026-09-23)
 
-1. **Install** — Settings → Extensions → paste
-   `/Users/yulimfish/Documents/AIWorkspace/openchamber-memory-graph-ui` → Add →
-   approve only the local-service permission (“Run a local service”) → Allow and enable.
-   (Rail icon “Memory Graph” appears; Extension pages menu gains an entry.)
-2. **Recovery states** — (a) deny/defer permission → panel explains Settings > Extensions
-   approval and offers Retry; (b) stop OpenCode web server → “opencode-mem is unavailable”
-   explains `webServerEnabled`; (c) upstream unauthorized state shows contract recovery
-   text; (d) empty search results show the list empty state; each state offers exactly
-   one Retry without an infinite loop.
-3. **List workflows against disposable data** — create a memory with a unique container
-   tag, search it (submit, not keystroke), edit it, pin/unpin, open details, verify it in
-   graph view, single-delete it, confirm the temporary id no longer exists. Bulk-delete
-   only newly created items; never touch pre-existing memories. Cleanup/deduplicate
-   prompts must warn before running.
-4. **Layout & accessibility** — narrow rail panel, desktop full page, ~390px mobile
-   width; keyboard tab order and visible focus; dialog focus trap + Escape + focus
-   restoration; light/dark themes follow OpenChamber; zh-CN and en-US locale; long
-   content/tags wrap; reduced-motion respected.
-5. **Graph stability** — open Graph, wait for reveal, sample two node positions ≥2 s
-   apart: zero movement after physics freezes (20 s fallback exists for pathological
-   cases).
-6. **Profile** — grouped sections render; Refresh profile shows progress, success toast,
-   and contract-specific errors; no AI cleanup/apply UI present.
-
-## Task 1 Step 5 second probe — after normal restart (NOT EXECUTED — user action required)
-
-After the user restarts OpenCode/OpenChamber once, repeat the five sanitized probes from
-`docs/2026-09-22-opencode-mem-http-contract.md` and confirm identical schema and
-authentication behavior (401 without header, 200 with dedicated header). Record results
-in this file without exposing credentials.
+Extracted to `docs/2026-09-23-retest-checklist.md` (item R1). Record results
+there without exposing credentials.
 
 ## Outcome summary
 
 | Plan step | Status |
 |---|---|
 | 1 Automated gate | PASS (executed) |
-| 2 Install from local folder | PENDING user |
-| 3 Recovery states | PENDING user |
-| 4 Disposable-data list workflows | PENDING user |
-| 5 Layout & accessibility | PENDING user |
-| 6 Graph stability with real data | PENDING user |
-| 7 Evidence recorded | DONE for executable portion; user fills Steps 2–6 here |
-| Post-restart contract probe | PENDING user |
+| 2 Install from local folder | EXTRACTED → retest checklist R2 |
+| 3 Recovery states | EXTRACTED → retest checklist R3 |
+| 4 Disposable-data list workflows | EXTRACTED → retest checklist R4 |
+| 5 Layout & accessibility | EXTRACTED → retest checklist R5 |
+| 6 Graph stability with real data | EXTRACTED → retest checklist R6 |
+| 7 Evidence recorded | DONE for executable portion |
+| Post-restart contract probe | EXTRACTED → retest checklist R1 |
 
-Definition-of-Done items that depend on Steps 2–6 (Git install smoke checks, live CRUD
-against the installed panel, manual verification complete) remain open until the user
-runs this checklist.
+Definition-of-Done items that depend on interactive verification (Git install
+smoke, live CRUD against the installed panel, manual verification complete) are
+tracked in `docs/2026-09-23-retest-checklist.md` (R8 and "Closing the loop").

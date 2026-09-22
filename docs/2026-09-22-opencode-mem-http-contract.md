@@ -60,12 +60,9 @@ identifiers, repository URLs, project paths, email addresses, and timestamps.
 
 ## Restart Verification
 
-The current OpenCode process hosts the active working session. Restarting it
-from this task would interrupt that session, so the second verification after a
-normal OpenCode/OpenChamber restart is deferred to Task 9 manual runtime
-verification. The test must repeat the five requests above, confirm the same
-authentication behavior and schemas, and record the results without exposing
-credentials.
+Extracted 2026-09-23 → `docs/2026-09-23-retest-checklist.md` (item R1). No
+restart was performed from the implementation tasks because the current
+OpenCode process hosts the active session.
 
 ## Service Requirements
 

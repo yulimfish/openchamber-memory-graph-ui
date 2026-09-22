@@ -551,29 +551,23 @@ Expected: all tests pass, TypeScript emits no errors, and both bundles rebuild s
 
 - [ ] **Step 2: Install from the local folder**
 
-In OpenChamber Settings -> Extensions, add:
-
-```text
-/Users/yulimfish/Documents/AIWorkspace/openchamber-memory-graph-ui
-```
-
-Approve only the local-service permission. Confirm the rail icon and Extension pages entry both appear.
+> Extracted 2026-09-23 → `docs/2026-09-23-retest-checklist.md` (R2).
 
 - [ ] **Step 3: Test recovery states**
 
-Verify service not approved, opencode-mem stopped, upstream unauthorized, empty results, and malformed upstream response. Each state must explain the cause and provide one retry action without an infinite retry loop.
+> Extracted 2026-09-23 → `docs/2026-09-23-retest-checklist.md` (R3).
 
 - [ ] **Step 4: Test list workflows against disposable data**
 
-Create a uniquely tagged test memory, search it, edit it, pin/unpin it, inspect it in graph view, and delete it. Do not modify pre-existing memories. Record the temporary id and confirm it no longer exists.
+> Extracted 2026-09-23 → `docs/2026-09-23-retest-checklist.md` (R4).
 
 - [ ] **Step 5: Test layout and accessibility**
 
-Verify narrow rail, desktop full page, and a mobile-width browser viewport. Check keyboard navigation, visible focus, dialog focus restoration, Escape behavior, light/dark themes, Chinese/English locale, long content, long tags, and reduced motion.
+> Extracted 2026-09-23 → `docs/2026-09-23-retest-checklist.md` (R5).
 
 - [ ] **Step 6: Verify graph stability with real data**
 
-Sample node positions after graph readiness, wait at least two seconds, and sample again. Expected: zero position changes after physics is frozen.
+> Extracted 2026-09-23 → `docs/2026-09-23-retest-checklist.md` (R6).
 
 - [ ] **Step 7: Record evidence and commit fixes**
 
@@ -624,15 +618,12 @@ git tag v0.1.0
 git push origin v0.1.0
 ```
 
-- [ ] **Step 6: Verify the remote artifact**
+- [x] **Step 6: Verify the remote artifact**
 
-Run:
+`git ls-remote` verified at release: HEAD = `7f7b3264e83251096faf59e2fc20b6017a144fbf`.
 
-```bash
-git ls-remote https://github.com/yulimfish/openchamber-memory-graph-ui.git HEAD
-```
-
-Then install `https://github.com/yulimfish/openchamber-memory-graph-ui.git#v0.1.0` in OpenChamber and repeat the health, list, graph, and profile smoke checks.
+> Install smoke (`…#v0.1.0` in OpenChamber + health/list/graph/profile checks)
+> extracted 2026-09-23 → `docs/2026-09-23-retest-checklist.md` (R8).
 
 ## Definition of Done
 
