@@ -2,6 +2,7 @@ import { connectHost } from "@openchamber/sdk";
 import { applyHostReady, mountBanner, mountButton, mountEmpty, mountSpinner, mountTabs } from "@openchamber/sdk/ui";
 import { createMemoryApi, MemoryApiError } from "./api";
 import { resolveLocale, strings } from "./i18n";
+import { mountMemoryView } from "./memory-view";
 import { initialState, reduce, type AppAction, type AppSurface, type AppView } from "./state";
 
 const host = connectHost();
@@ -35,9 +36,11 @@ const feedback = document.createElement("div");
 const spinnerRoot = document.createElement("div");
 const bannerRoot = document.createElement("div");
 feedback.append(spinnerRoot, bannerRoot);
+const memoryRoot = document.createElement("div");
+memoryRoot.className = "memory-list";
 const placeholder = document.createElement("div");
 placeholder.className = "memory-app__placeholder";
-content.append(feedback, placeholder);
+content.append(feedback, memoryRoot, placeholder);
 root.append(header, tabsRoot, content);
 
 const tabs = mountTabs(tabsRoot, {
@@ -55,6 +58,13 @@ const banner = mountBanner(bannerRoot, {
   body: "",
   action: { label: "", onClick: () => void load() },
 });
+const memoryView = mountMemoryView(memoryRoot, {
+  api,
+  dispatch,
+  reload: load,
+  strings,
+  toast: (kind, message) => void host.toast({ kind, message }),
+});
 
 function surfaceFromHost(surface: string): AppSurface {
   return surface === "page" ? "page" : "panel";
@@ -66,15 +76,22 @@ function dispatch(action: AppAction): void {
 }
 
 async function load(): Promise<void> {
-  if (state.loading) return;
   dispatch({ type: "REQUEST_STARTED" });
   const generation = state.requestGeneration;
   try {
-    const page = await api.getMemories({
-      page: state.page,
-      pageSize: state.pageSize,
-      includePrompts: true,
-    });
+    const page = state.query
+      ? await api.searchMemories({
+          query: state.query,
+          page: state.page,
+          pageSize: state.pageSize,
+          tag: state.selectedTag ?? undefined,
+        })
+      : await api.getMemories({
+          page: state.page,
+          pageSize: state.pageSize,
+          includePrompts: true,
+          tag: state.selectedTag ?? undefined,
+        });
     dispatch({ type: "MEMORIES_RECEIVED", generation, page });
   } catch (error) {
     const code = error instanceof MemoryApiError ? error.code : "SERVICE_FAILED";
@@ -125,8 +142,10 @@ function render(): void {
     spinner.update({ label: text.loading, size: "sm" });
   }
   feedback.hidden = !state.loading && !state.error;
-  placeholder.hidden = state.loading || Boolean(state.error);
+  memoryRoot.hidden = state.activeView !== "list";
+  placeholder.hidden = state.activeView === "list" || state.loading || Boolean(state.error);
   empty.update({ title: text.emptyTitle, body: text.emptyBody });
+  memoryView.update(state);
 }
 
 function mount(): void {
@@ -145,15 +164,23 @@ const stopReady = host.onReady((context) => {
   }
 });
 
+const pollTimer = setInterval(() => {
+  if (document.visibilityState === "visible" && state.activeView === "list" && !state.loading) {
+    void load();
+  }
+}, 30_000);
+
 window.addEventListener(
   "unload",
   () => {
+    clearInterval(pollTimer);
     stopReady();
     tabs.dispose();
     refresh.dispose();
     empty.dispose();
     spinner.dispose();
     banner.dispose();
+    memoryView.dispose();
     host.dispose();
   },
   { once: true },

@@ -28,8 +28,8 @@ export class MemoryApiError extends Error {
 }
 
 export type MemoryApi = {
-  getMemories(input: { page: number; pageSize: number; includePrompts?: boolean; containerTag?: string }): Promise<MemoryPage>;
-  searchMemories(input: { query: string; page: number; pageSize: number; containerTag?: string }): Promise<MemoryPage>;
+  getMemories(input: { page: number; pageSize: number; includePrompts?: boolean; tag?: string }): Promise<MemoryPage>;
+  searchMemories(input: { query: string; page: number; pageSize: number; tag?: string }): Promise<MemoryPage>;
   getTags(): Promise<{ project: MemoryTag[] }>;
   getStats(): Promise<MemoryStats>;
   createMemory(input: CreateMemoryInput): Promise<Record<string, unknown>>;
@@ -141,7 +141,7 @@ export function createMemoryApi(host: ServiceHost): MemoryApi {
           q: input.query,
           page: input.page,
           pageSize: input.pageSize,
-          containerTag: input.containerTag,
+          tag: input.tag,
         }),
       }),
     getTags: () => request({ method: "GET", path: "/memory-api/api/tags" }),

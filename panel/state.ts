@@ -13,6 +13,7 @@ export type AppState = {
   pageSize: number;
   total: number;
   query: string;
+  queryDraft: string;
   selectedTag: string | null;
   selectedIds: string[];
   selectedMemoryId: string | null;
@@ -30,6 +31,7 @@ export const initialState: AppState = {
   pageSize: 20,
   total: 0,
   query: "",
+  queryDraft: "",
   selectedTag: null,
   selectedIds: [],
   selectedMemoryId: null,
@@ -40,7 +42,8 @@ export const initialState: AppState = {
 export type AppAction =
   | { type: "HOST_READY"; surface: AppSurface; locale: string }
   | { type: "VIEW_CHANGED"; view: AppView }
-  | { type: "QUERY_CHANGED"; query: string }
+  | { type: "QUERY_DRAFT_CHANGED"; query: string }
+  | { type: "QUERY_SUBMITTED"; query: string }
   | { type: "TAG_CHANGED"; tag: string | null }
   | { type: "PAGE_CHANGED"; page: number }
   | { type: "PAGE_SIZE_CHANGED"; pageSize: number }
@@ -50,7 +53,7 @@ export type AppAction =
   | { type: "REQUEST_FAILED"; generation: number; message: string }
   | { type: "MEMORIES_RECEIVED"; generation: number; page: MemoryPage };
 
-function resetPage(state: AppState, update: Pick<AppState, "query" | "selectedTag" | "pageSize">): AppState {
+function resetPage(state: AppState, update: Pick<AppState, "query" | "queryDraft" | "selectedTag" | "pageSize">): AppState {
   return { ...state, ...update, page: 1 };
 }
 
@@ -60,15 +63,18 @@ export function reduce(state: AppState, action: AppAction): AppState {
       return { ...state, surface: action.surface, locale: action.locale };
     case "VIEW_CHANGED":
       return { ...state, activeView: action.view };
-    case "QUERY_CHANGED":
-      return resetPage(state, { query: action.query, selectedTag: state.selectedTag, pageSize: state.pageSize });
+    case "QUERY_DRAFT_CHANGED":
+      return { ...state, queryDraft: action.query };
+    case "QUERY_SUBMITTED":
+      return resetPage(state, { query: action.query, queryDraft: action.query, selectedTag: state.selectedTag, pageSize: state.pageSize });
     case "TAG_CHANGED":
-      return resetPage(state, { query: state.query, selectedTag: action.tag, pageSize: state.pageSize });
+      return resetPage(state, { query: state.query, queryDraft: state.queryDraft, selectedTag: action.tag, pageSize: state.pageSize });
     case "PAGE_CHANGED":
       return { ...state, page: Math.max(1, action.page) };
     case "PAGE_SIZE_CHANGED":
       return resetPage(state, {
         query: state.query,
+        queryDraft: state.queryDraft,
         selectedTag: state.selectedTag,
         pageSize: Number.isSafeInteger(action.pageSize) && action.pageSize > 0
           ? action.pageSize
@@ -108,5 +114,7 @@ export function reduce(state: AppState, action: AppAction): AppState {
           : null,
       };
     }
+    default:
+      return state;
   }
 }

@@ -119,12 +119,30 @@ test("sends explicit tags and stats requests", async () => {
   ]);
 });
 
+test("filters list requests by tag parameter", async () => {
+  const { host, requests } = createHost({
+    status: 200,
+    body: '{"success":true,"data":{"items":[],"total":0,"page":1,"pageSize":20,"totalPages":0}}',
+  });
+  const api = createMemoryApi(host);
+
+  await api.getMemories({ page: 1, pageSize: 20, includePrompts: true, tag: "opencode_project_example" });
+
+  expect(requests).toEqual([
+    {
+      method: "GET",
+      path: "/memory-api/api/memories",
+      query: { page: "1", pageSize: "20", includePrompts: "true", tag: "opencode_project_example" },
+    },
+  ]);
+});
+
 test("sends explicit mutation requests only", async () => {
   const { host, requests } = createHost({ status: 200, body: '{"success":true,"data":{}}' });
   const api = createMemoryApi(host);
 
   await api.createMemory({ containerTag: "project-example", content: "Example" });
-  await api.searchMemories({ query: "example", page: 2, pageSize: 5, containerTag: "project-example" });
+  await api.searchMemories({ query: "example", page: 2, pageSize: 5, tag: "project-example" });
   await api.updateMemory("memory-1", { content: "Updated" });
   await api.bulkDelete(["memory-1", "memory-2"]);
   await api.pinMemory("memory-1");
@@ -144,7 +162,7 @@ test("sends explicit mutation requests only", async () => {
     {
       method: "GET",
       path: "/memory-api/api/search",
-      query: { q: "example", page: "2", pageSize: "5", containerTag: "project-example" },
+      query: { q: "example", page: "2", pageSize: "5", tag: "project-example" },
     },
     { method: "PUT", path: "/memory-api/api/memories/memory-1", body: '{"content":"Updated"}' },
     { method: "POST", path: "/memory-api/api/memories/bulk-delete", body: '{"ids":["memory-1","memory-2"]}' },

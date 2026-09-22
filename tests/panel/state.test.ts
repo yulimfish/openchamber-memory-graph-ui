@@ -15,12 +15,26 @@ function page(ids: string[]): MemoryPage {
 test("resets pagination when search query or selected tag changes", () => {
   const pageThree = { ...initialState, page: 3 };
 
-  expect(reduce(pageThree, { type: "QUERY_CHANGED", query: "memory" })).toMatchObject({
+  expect(reduce(pageThree, { type: "QUERY_SUBMITTED", query: "memory" })).toMatchObject({
     query: "memory",
+    queryDraft: "memory",
     page: 1,
   });
   expect(reduce(pageThree, { type: "TAG_CHANGED", tag: "project-example" })).toMatchObject({
     selectedTag: "project-example",
+    page: 1,
+  });
+});
+
+test("keeps draft query separate until submit", () => {
+  const pageThree = { ...initialState, page: 3, query: "old" };
+
+  const draft = reduce(pageThree, { type: "QUERY_DRAFT_CHANGED", query: "new" });
+  expect(draft).toMatchObject({ queryDraft: "new", query: "old", page: 3 });
+
+  expect(reduce(draft, { type: "QUERY_SUBMITTED", query: "new" })).toMatchObject({
+    query: "new",
+    queryDraft: "new",
     page: 1,
   });
 });
