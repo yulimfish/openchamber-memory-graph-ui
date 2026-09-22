@@ -254,6 +254,70 @@ button:focus-visible,
   color: var(--oc-primary-fg);
 }
 
+.memory-graph {
+  display: grid;
+  grid-template-rows: auto auto minmax(240px, 1fr);
+  gap: 10px;
+  block-size: 100%;
+  min-block-size: 0;
+}
+
+.memory-graph__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.memory-graph__chips { display: flex; gap: 6px; }
+.memory-graph__search { flex: 1 1 160px; min-inline-size: 0; }
+.memory-graph__tools { display: flex; gap: 4px; }
+
+.memory-graph__feedback {
+  display: grid;
+  place-items: center;
+  min-block-size: 160px;
+}
+
+.memory-graph__canvas {
+  position: relative;
+  block-size: 100%;
+  min-block-size: 240px;
+  border: 1px solid var(--oc-border);
+  border-radius: var(--oc-radius, 8px);
+  background: var(--oc-muted-surface, var(--oc-bg));
+  opacity: 0;
+  transition: opacity 180ms ease-out;
+}
+
+.memory-graph__canvas.is-ready { opacity: 1; }
+
+.memory-app[data-surface="panel"] .memory-graph { grid-template-rows: auto auto minmax(180px, 1fr); }
+.memory-app[data-surface="panel"] .memory-graph__canvas { min-block-size: 180px; }
+
+.memory-graph__related { display: grid; gap: 8px; }
+
+.memory-graph__related h3 {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--oc-muted);
+}
+
+.memory-graph__related-list { display: grid; gap: 6px; }
+
+.memory-graph__related-button {
+  padding: 6px 10px;
+  border: 1px solid var(--oc-border);
+  border-radius: 6px;
+  background: var(--oc-bg);
+  color: var(--oc-fg);
+  text-align: start;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+
+.memory-graph__related-button:hover { background: var(--oc-hover); }
+
 .memory-overlay {
   position: fixed;
   z-index: 10;

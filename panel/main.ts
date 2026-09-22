@@ -1,6 +1,7 @@
 import { connectHost } from "@openchamber/sdk";
 import { applyHostReady, mountBanner, mountButton, mountEmpty, mountSpinner, mountTabs } from "@openchamber/sdk/ui";
 import { createMemoryApi, MemoryApiError } from "./api";
+import { mountGraphView } from "./graph-view";
 import { resolveLocale, strings } from "./i18n";
 import { mountMemoryView } from "./memory-view";
 import { initialState, reduce, type AppAction, type AppSurface, type AppView } from "./state";
@@ -38,9 +39,11 @@ const bannerRoot = document.createElement("div");
 feedback.append(spinnerRoot, bannerRoot);
 const memoryRoot = document.createElement("div");
 memoryRoot.className = "memory-list";
+const graphRoot = document.createElement("div");
+graphRoot.className = "memory-graph";
 const placeholder = document.createElement("div");
 placeholder.className = "memory-app__placeholder";
-content.append(feedback, memoryRoot, placeholder);
+content.append(feedback, memoryRoot, graphRoot, placeholder);
 root.append(header, tabsRoot, content);
 
 const tabs = mountTabs(tabsRoot, {
@@ -65,6 +68,7 @@ const memoryView = mountMemoryView(memoryRoot, {
   strings,
   toast: (kind, message) => void host.toast({ kind, message }),
 });
+const graphView = mountGraphView(graphRoot, { api, strings });
 
 function surfaceFromHost(surface: string): AppSurface {
   return surface === "page" ? "page" : "panel";
@@ -143,9 +147,11 @@ function render(): void {
   }
   feedback.hidden = !state.loading && !state.error;
   memoryRoot.hidden = state.activeView !== "list";
-  placeholder.hidden = state.activeView === "list" || state.loading || Boolean(state.error);
+  graphRoot.hidden = state.activeView !== "graph";
+  placeholder.hidden = state.activeView !== "profile" || state.loading || Boolean(state.error);
   empty.update({ title: text.emptyTitle, body: text.emptyBody });
   memoryView.update(state);
+  graphView.update(state);
 }
 
 function mount(): void {
@@ -181,6 +187,7 @@ window.addEventListener(
     spinner.dispose();
     banner.dispose();
     memoryView.dispose();
+    graphView.dispose();
     host.dispose();
   },
   { once: true },

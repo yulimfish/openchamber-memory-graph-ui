@@ -9,6 +9,7 @@ declare module "bun:test" {
     toEqual(expected: unknown): void;
     toHaveLength(expected: number): void;
     toMatchObject(expected: object): void;
+    toBeGreaterThan(expected: number): void;
     readonly resolves: AsyncExpectation;
     readonly rejects: AsyncExpectation;
   };
