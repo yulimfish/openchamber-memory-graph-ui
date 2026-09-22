@@ -1,9 +1,10 @@
 import { connectHost } from "@openchamber/sdk";
-import { applyHostReady, mountBanner, mountButton, mountEmpty, mountSpinner, mountTabs } from "@openchamber/sdk/ui";
+import { applyHostReady, mountBanner, mountButton, mountSpinner, mountTabs } from "@openchamber/sdk/ui";
 import { createMemoryApi, MemoryApiError } from "./api";
 import { mountGraphView } from "./graph-view";
 import { resolveLocale, strings } from "./i18n";
 import { mountMemoryView } from "./memory-view";
+import { mountProfileView } from "./profile-view";
 import { initialState, reduce, type AppAction, type AppSurface, type AppView } from "./state";
 
 const host = connectHost();
@@ -41,9 +42,9 @@ const memoryRoot = document.createElement("div");
 memoryRoot.className = "memory-list";
 const graphRoot = document.createElement("div");
 graphRoot.className = "memory-graph";
-const placeholder = document.createElement("div");
-placeholder.className = "memory-app__placeholder";
-content.append(feedback, memoryRoot, graphRoot, placeholder);
+const profileRoot = document.createElement("div");
+profileRoot.className = "profile";
+content.append(feedback, memoryRoot, graphRoot, profileRoot);
 root.append(header, tabsRoot, content);
 
 const tabs = mountTabs(tabsRoot, {
@@ -53,7 +54,6 @@ const tabs = mountTabs(tabsRoot, {
   trackBackground: true,
 });
 const refresh = mountButton(toolbar, { label: "", variant: "outline", size: "sm", onClick: () => void load() });
-const empty = mountEmpty(placeholder, { title: "", body: "" });
 const spinner = mountSpinner(spinnerRoot, { label: "" });
 const banner = mountBanner(bannerRoot, {
   tone: "error",
@@ -69,6 +69,11 @@ const memoryView = mountMemoryView(memoryRoot, {
   toast: (kind, message) => void host.toast({ kind, message }),
 });
 const graphView = mountGraphView(graphRoot, { api, strings });
+const profileView = mountProfileView(profileRoot, {
+  api,
+  strings,
+  toast: (kind, message) => void host.toast({ kind, message }),
+});
 
 function surfaceFromHost(surface: string): AppSurface {
   return surface === "page" ? "page" : "panel";
@@ -148,10 +153,10 @@ function render(): void {
   feedback.hidden = !state.loading && !state.error;
   memoryRoot.hidden = state.activeView !== "list";
   graphRoot.hidden = state.activeView !== "graph";
-  placeholder.hidden = state.activeView !== "profile" || state.loading || Boolean(state.error);
-  empty.update({ title: text.emptyTitle, body: text.emptyBody });
+  profileRoot.hidden = state.activeView !== "profile";
   memoryView.update(state);
   graphView.update(state);
+  profileView.update(state);
 }
 
 function mount(): void {
@@ -183,11 +188,11 @@ window.addEventListener(
     stopReady();
     tabs.dispose();
     refresh.dispose();
-    empty.dispose();
     spinner.dispose();
     banner.dispose();
     memoryView.dispose();
     graphView.dispose();
+    profileView.dispose();
     host.dispose();
   },
   { once: true },

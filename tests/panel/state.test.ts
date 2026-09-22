@@ -1,5 +1,6 @@
 import { expect, test } from "bun:test";
 import { initialState, reduce } from "../../panel/state";
+import { formatAlphaBeta, formatConfidence, groupProfileItems } from "../../panel/profile-view";
 import type { MemoryPage } from "../../panel/types";
 
 function page(ids: string[]): MemoryPage {
@@ -94,4 +95,44 @@ test("keeps page size as a positive integer", () => {
     page: 1,
     pageSize: 50,
   });
+});
+
+test("groups profile items by category with fallback and descending size", () => {
+  const items = [
+    { category: "a", description: "first" },
+    { category: "b", description: "second" },
+    { category: "b", description: "third" },
+    { description: "uncategorized" },
+  ];
+
+  const groups = groupProfileItems(items, "General");
+
+  expect(groups.map((group) => group.label)).toEqual(["b", "a", "General"]);
+  expect(groups.map((group) => group.items.length)).toEqual([2, 1, 1]);
+  expect(groups.find((group) => group.label === "General")?.items.map((item) => item.description)).toEqual([
+    "uncategorized",
+  ]);
+});
+
+test("formats confidence and alpha/beta signal stats", () => {
+  expect(formatConfidence(0.9)).toBe("90%");
+  expect(formatConfidence(0.875)).toBe("88%");
+  expect(formatConfidence(undefined)).toBeNull();
+  expect(formatAlphaBeta(3, 1)).toBe("3/1");
+  expect(formatAlphaBeta(undefined, 1)).toBeNull();
+  expect(formatAlphaBeta(2, undefined)).toBeNull();
+});
+
+test("keeps workflow step order through grouping", () => {
+  const workflows = [
+    { category: "coding", description: "workflow one", steps: ["step 1", "step 2", "step 3"] },
+    { description: "workflow two", steps: ["only step"] },
+  ];
+
+  const groups = groupProfileItems(workflows, "General");
+  const flattened = groups.flatMap((group) => group.items);
+  const ordered = flattened.find((item) => item.description === "workflow one");
+
+  expect(ordered?.steps).toEqual(["step 1", "step 2", "step 3"]);
+  expect(groups.find((group) => group.label === "General")?.items[0]?.steps).toEqual(["only step"]);
 });

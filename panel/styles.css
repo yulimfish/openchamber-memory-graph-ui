@@ -318,6 +318,87 @@ button:focus-visible,
 
 .memory-graph__related-button:hover { background: var(--oc-hover); }
 
+.profile {
+  display: grid;
+  gap: 16px;
+  align-content: start;
+}
+
+.profile__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.profile__summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 14px;
+  min-inline-size: 0;
+  flex: 1;
+}
+
+.profile__name { font-size: 0.9375rem; }
+.profile__meta { color: var(--oc-muted); font-size: 0.8125rem; overflow-wrap: anywhere; }
+
+.profile__feedback { display: grid; gap: 10px; }
+
+.profile__body { display: grid; gap: 20px; }
+
+.profile__section { display: grid; gap: 10px; }
+
+.profile__section-title {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 650;
+  border-bottom: 1px solid var(--oc-border);
+  padding-bottom: 6px;
+}
+
+.profile__group { display: grid; gap: 8px; }
+
+.profile__group-title {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--oc-muted);
+}
+
+.profile__item {
+  display: grid;
+  gap: 6px;
+  padding: 10px 12px;
+  border: 1px solid var(--oc-border);
+  border-radius: var(--oc-radius, 8px);
+  background: var(--oc-muted-surface, var(--oc-bg));
+}
+
+.profile__item-description { margin: 0; overflow-wrap: anywhere; }
+
+.profile__item-stats { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.profile__stat {
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--oc-primary) 14%, transparent);
+  color: var(--oc-primary-text);
+  font-size: 0.6875rem;
+}
+
+.profile__steps,
+.profile__evidence {
+  margin: 0;
+  padding-inline-start: 20px;
+  display: grid;
+  gap: 3px;
+  color: var(--oc-muted);
+  font-size: 0.8125rem;
+}
+
+.profile__evidence { list-style: circle; }
+.profile__steps { list-style: decimal; }
+
 .memory-overlay {
   position: fixed;
   z-index: 10;
