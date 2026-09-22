@@ -1,0 +1,16 @@
+{
+  "success": true,
+  "data": {
+    "project": [
+      {
+        "tag": "opencode_project_example",
+        "displayName": "Example project",
+        "userName": null,
+        "userEmail": null,
+        "projectPath": "/Users/example/project",
+        "projectName": "example-project",
+        "gitRepoUrl": "https://example.test/example-project"
+      }
+    ]
+  }
+}

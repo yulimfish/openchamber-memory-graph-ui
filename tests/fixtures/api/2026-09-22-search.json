@@ -1,0 +1,34 @@
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "type": "memory",
+        "id": "memory-example-1",
+        "content": "Example matching memory.",
+        "tags": ["example"],
+        "createdAt": "2026-09-22T00:00:00.000Z",
+        "similarity": 0.92,
+        "displayName": "Example project",
+        "projectPath": "/Users/example/project",
+        "projectName": "example-project",
+        "gitRepoUrl": "https://example.test/example-project",
+        "isPinned": false
+      },
+      {
+        "type": "prompt",
+        "id": "prompt-example-1",
+        "sessionId": "session-example-1",
+        "content": "Example matching prompt.",
+        "createdAt": "2026-09-22T00:00:00.000Z",
+        "projectPath": "/Users/example/project",
+        "linkedMemoryId": null,
+        "similarity": 0.75
+      }
+    ],
+    "total": 2,
+    "page": 1,
+    "pageSize": 2,
+    "totalPages": 1
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "type": "memory",
+        "id": "memory-example-1",
+        "content": "Example memory content.",
+        "memoryType": "decision",
+        "tags": ["example", "memory"],
+        "createdAt": "2026-09-22T00:00:00.000Z",
+        "updatedAt": "2026-09-22T00:00:00.000Z",
+        "metadata": { "source": "example" },
+        "linkedPromptId": "prompt-example-1",
+        "displayName": "Example project",
+        "userName": null,
+        "userEmail": null,
+        "projectPath": "/Users/example/project",
+        "projectName": "example-project",
+        "gitRepoUrl": "https://example.test/example-project",
+        "isPinned": false,
+        "isStaged": false,
+        "source": "manual",
+        "authority": "user",
+        "observedAt": 1,
+        "validUntil": 1,
+        "injectCount": 1
+      },
+      {
+        "type": "prompt",
+        "id": "prompt-example-1",
+        "sessionId": "session-example-1",
+        "content": "Example prompt content.",
+        "createdAt": "2026-09-22T00:00:00.000Z",
+        "projectPath": "/Users/example/project",
+        "linkedMemoryId": "memory-example-1"
+      }
+    ],
+    "total": 2,
+    "page": 1,
+    "pageSize": 2,
+    "totalPages": 1
+  }
+}

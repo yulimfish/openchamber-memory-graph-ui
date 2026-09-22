@@ -1,0 +1,14 @@
+{
+  "success": true,
+  "data": {
+    "total": 2,
+    "byScope": {
+      "user": 0,
+      "project": 2
+    },
+    "byType": {
+      "decision": 1,
+      "technical-finding": 1
+    }
+  }
+}

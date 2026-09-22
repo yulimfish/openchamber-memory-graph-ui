@@ -1,0 +1,83 @@
+{
+  "success": true,
+  "data": {
+    "exists": true,
+    "id": "profile-example-1",
+    "userId": "user-example-1",
+    "displayName": "Example user",
+    "userName": "example-user",
+    "userEmail": "user@example.test",
+    "version": 1,
+    "createdAt": "2026-09-22T00:00:00.000Z",
+    "lastAnalyzedAt": "2026-09-22T00:00:00.000Z",
+    "totalPromptsAnalyzed": 2,
+    "profileData": {
+      "preferences": [
+        {
+          "category": "communication",
+          "description": "Example preference.",
+          "confidence": 0.9,
+          "evidence": ["Example evidence."],
+          "alpha": 3,
+          "beta": 1,
+          "weakAlpha": 0,
+          "weakBeta": 0,
+          "lastMatchTime": 1,
+          "firstSeen": 1,
+          "lastSeen": 1,
+          "pendingValidation": false,
+          "centroid": [0.1, 0.2],
+          "anchor": [0.1, 0.2],
+          "frequency": 2,
+          "weakHitCount": 0,
+          "lastWeakHitAt": null,
+          "driftBelowCount": 0
+        }
+      ],
+      "patterns": [
+        {
+          "category": "workflow",
+          "description": "Example pattern.",
+          "confidence": 0.8,
+          "evidence": ["Example evidence."],
+          "alpha": 2,
+          "beta": 1,
+          "weakAlpha": 0,
+          "weakBeta": 0,
+          "lastMatchTime": 1,
+          "firstSeen": 1,
+          "lastSeen": 1,
+          "pendingValidation": false,
+          "centroid": [0.3, 0.4],
+          "anchor": [0.3, 0.4],
+          "frequency": 1,
+          "weakHitCount": 0,
+          "lastWeakHitAt": null,
+          "driftBelowCount": 0
+        }
+      ],
+      "workflows": [
+        {
+          "description": "Example workflow.",
+          "steps": ["First example step.", "Second example step."],
+          "confidence": 0.8,
+          "evidence": ["Example evidence."],
+          "alpha": 2,
+          "beta": 1,
+          "weakAlpha": 0,
+          "weakBeta": 0,
+          "lastMatchTime": 1,
+          "firstSeen": 1,
+          "lastSeen": 1,
+          "pendingValidation": false,
+          "centroid": [0.5, 0.6],
+          "anchor": [0.5, 0.6],
+          "frequency": 1,
+          "weakHitCount": 0,
+          "lastWeakHitAt": null,
+          "driftBelowCount": 0
+        }
+      ]
+    }
+  }
+}
