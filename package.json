@@ -1,0 +1,43 @@
+{
+  "name": "openchamber-memory-graph-ui",
+  "version": "0.1.0",
+  "description": "OpenChamber panel for the local opencode-mem service.",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "@openchamber/sdk": "1.24.2",
+    "vis-network": "10.1.2"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.2",
+    "typescript": "7.0.2"
+  },
+  "scripts": {
+    "test": "bun test",
+    "typecheck": "tsc --noEmit",
+    "build:panel": "bunx openchamber-guest-bundle panel/main.ts panel/main.js",
+    "build:service": "bunx openchamber-guest-bundle --node service/main.ts service/main.js",
+    "build": "bun run build:panel && bun run build:service",
+    "check": "bun test && bun run typecheck && bun run build"
+  },
+  "openchamber": {
+    "apiVersion": 1,
+    "engines": {
+      "openchamber": ">=1.24.0"
+    },
+    "contributes": {
+      "panel": {
+        "id": "openchamber-memory-graph-ui",
+        "name": "Memory Graph",
+        "icon": "share",
+        "entry": "panel/index.html"
+      },
+      "page": true,
+      "capabilities": [],
+      "service": {
+        "entry": "service/main.js",
+        "runtime": "host"
+      }
+    }
+  }
+}
