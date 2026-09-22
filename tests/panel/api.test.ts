@@ -71,6 +71,14 @@ test("maps service, upstream, and invalid-response failures", async () => {
       return { status: 401, body: "<html>Unauthorized</html>" };
     },
   });
+  const unavailable = createMemoryApi({
+    async serviceRequest() {
+      return {
+        status: 502,
+        body: '{"code":"UPSTREAM_UNAVAILABLE","message":"opencode-mem is not reachable on 127.0.0.1:4747"}',
+      };
+    },
+  });
 
   await expect(noService.getStats()).rejects.toEqual(
     new MemoryApiError("NO_SERVICE", "Not approved"),
@@ -92,6 +100,9 @@ test("maps service, upstream, and invalid-response failures", async () => {
   );
   await expect(htmlUnauthorized.getStats()).rejects.toEqual(
     new MemoryApiError("UPSTREAM_UNAUTHORIZED", "The upstream request failed with status 401"),
+  );
+  await expect(unavailable.getStats()).rejects.toEqual(
+    new MemoryApiError("UPSTREAM_UNAVAILABLE", "opencode-mem is not reachable on 127.0.0.1:4747"),
   );
 });
 

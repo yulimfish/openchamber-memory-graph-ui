@@ -16,6 +16,7 @@ export type MemoryApiErrorCode =
   | "NO_SERVICE"
   | "SERVICE_FAILED"
   | "UPSTREAM_UNAUTHORIZED"
+  | "UPSTREAM_UNAVAILABLE"
   | "UPSTREAM_ERROR"
   | "INVALID_RESPONSE";
 
@@ -84,6 +85,14 @@ function decode<T>(result: GuestRequestResult): T {
 
   const message = errorMessage(value, `The upstream request failed with status ${result.status}`);
   if (result.status < 200 || result.status >= 300) {
+    if (
+      typeof value === "object" &&
+      value !== null &&
+      "code" in value &&
+      value.code === "UPSTREAM_UNAVAILABLE"
+    ) {
+      throw new MemoryApiError("UPSTREAM_UNAVAILABLE", message);
+    }
     throw new MemoryApiError(result.status === 401 ? "UPSTREAM_UNAUTHORIZED" : "UPSTREAM_ERROR", message);
   }
   if (typeof value !== "object" || value === null || !("success" in value)) {

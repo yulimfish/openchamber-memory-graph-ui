@@ -1,0 +1,150 @@
+:root {
+  background: var(--oc-bg);
+  color: var(--oc-fg);
+  font-family: var(--oc-font, system-ui, sans-serif);
+}
+
+* { box-sizing: border-box; }
+
+body { margin: 0; min-inline-size: 0; }
+
+button:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--oc-focus, var(--oc-primary));
+  outline-offset: 2px;
+}
+
+.memory-app {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  min-block-size: 100vh;
+  background: var(--oc-bg);
+}
+
+.memory-app__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid var(--oc-border);
+}
+
+.memory-app__title { margin: 0; font-size: 1rem; font-weight: 650; }
+
+.memory-app__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--oc-muted);
+  font-size: 0.75rem;
+}
+
+.memory-app__status-dot {
+  inline-size: 8px;
+  block-size: 8px;
+  border-radius: 999px;
+  background: var(--oc-success);
+}
+
+.memory-app__toolbar { margin-inline-start: auto; }
+
+.memory-app__tabs { padding: 10px 16px; border-bottom: 1px solid var(--oc-border); }
+
+.memory-app__content {
+  min-block-size: 0;
+  padding: 16px;
+}
+
+.memory-app__placeholder {
+  display: grid;
+  place-items: center;
+  min-block-size: 180px;
+}
+
+.memory-app[data-surface="panel"] .memory-app__header,
+.memory-app[data-surface="panel"] .memory-app__tabs,
+.memory-app[data-surface="panel"] .memory-app__content { padding-inline: 12px; }
+
+.memory-overlay {
+  position: fixed;
+  z-index: 10;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: color-mix(in srgb, var(--oc-bg) 48%, transparent);
+}
+
+.memory-dialog {
+  position: relative;
+  inline-size: min(100%, 520px);
+  max-block-size: calc(100vh - 32px);
+  overflow: auto;
+  padding: 20px;
+  border: 1px solid var(--oc-border);
+  border-radius: var(--oc-radius, 10px);
+  background: var(--oc-elevated);
+  color: var(--oc-elevated-fg, var(--oc-fg));
+  box-shadow: 0 16px 48px color-mix(in srgb, var(--oc-fg) 20%, transparent);
+}
+
+.memory-dialog--drawer {
+  position: fixed;
+  inset-block: 0;
+  inset-inline-end: 0;
+  inline-size: min(100%, 440px);
+  max-block-size: none;
+  border-radius: 0;
+}
+
+.memory-dialog__close {
+  position: absolute;
+  inset-block-start: 12px;
+  inset-inline-end: 12px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 1.25rem;
+}
+
+.memory-confirm__message {
+  margin: 0 0 16px;
+  color: var(--oc-muted);
+  line-height: 1.5;
+}
+
+.memory-confirm__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.memory-confirm__button {
+  padding: 7px 14px;
+  border: 1px solid var(--oc-border);
+  border-radius: var(--oc-radius, 8px);
+  background: var(--oc-bg);
+  color: var(--oc-fg);
+  cursor: pointer;
+}
+
+.memory-confirm__button--primary {
+  border-color: var(--oc-primary);
+  background: var(--oc-primary);
+  color: var(--oc-primary-fg);
+}
+
+.memory-confirm__button--destructive {
+  border-color: var(--oc-error);
+  background: var(--oc-error);
+  color: var(--oc-error-text, #fff);
+}
+
+@media (max-width: 480px) {
+  .memory-app__header { padding-block: 12px 8px; }
+  .memory-app__content { padding: 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; }
+}
