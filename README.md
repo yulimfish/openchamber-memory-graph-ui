@@ -11,6 +11,10 @@ user profile.
 - **Local only**: everything talks to `http://127.0.0.1:4747` through an
   authenticated bundled local service. No accounts, no telemetry, no CDN assets.
 
+## Works with opencode-mem
+
+[`opencode-mem`](https://github.com/yulimfish/opencode-mem) is the memory-system core: it owns storage, capture, retrieval/injection, and its standalone full-management WebUI. This extension is its OpenChamber companion, giving you an in-context place to browse, search, manage memories, and explore the graph. It uses the same memory data through the authenticated local API; it does not create a separate store or replace the plugin's core behavior. You can use either interface on its own or both together.
+
 ## Prerequisites
 
 - OpenChamber ≥ 1.24.0 (desktop or web)
