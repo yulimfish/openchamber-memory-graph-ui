@@ -1,7 +1,9 @@
 # openchamber-memory-graph-ui
 
+[简体中文](README.zh-CN.md) | **English**
+
 An [OpenChamber](https://openchamber.dev) extension that brings your local
-[`opencode-mem`](https://github.com/yulimfish) memory store into OpenChamber as a
+[`opencode-mem`](https://github.com/yulimfish/opencode-mem) memory store into OpenChamber as a
 rail panel and a full-screen page: browse, search, edit, and delete memories,
 explore a stable interactive graph of memories and prompts, and read your grouped
 user profile.
@@ -21,6 +23,9 @@ user profile.
 - OpenCode running with the `opencode-mem` plugin, `webServerEnabled: true`
   (default port `4747`)
 - The extension's **local-service** permission (requested once at install)
+
+The `>=1.24.0` minimum is declared in the extension manifest. The current build,
+using SDK 2.5.2, has not been run on OpenChamber 1.24.0 or 1.24.2.
 
 ## Install
 
