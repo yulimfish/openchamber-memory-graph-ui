@@ -19,6 +19,7 @@ export type ConfirmOptions = {
 
 export type DialogHandle = {
   close(): void;
+  update(options: { title?: string; closeLabel?: string; message?: string; confirmLabel?: string; cancelLabel?: string; content?: Node }): void;
 };
 
 let activeDialog: DialogHandle | null = null;
@@ -53,7 +54,8 @@ export function openDialog({ title, content, closeLabel, kind = "dialog", onClos
   closeButton.className = "memory-dialog__close";
   closeButton.setAttribute("aria-label", closeLabel);
   closeButton.textContent = "×";
-  panel.append(heading, closeButton, content);
+  let currentContent = content;
+  panel.append(heading, closeButton, currentContent);
   overlay.append(panel);
 
   const close = () => {
@@ -101,7 +103,26 @@ export function openDialog({ title, content, closeLabel, kind = "dialog", onClos
   document.addEventListener("keydown", onKeyDown);
   document.body.append(overlay);
   closeButton.focus();
-  const handle: DialogHandle = { close };
+  const handle: DialogHandle = {
+    close,
+    update(options) {
+      if (options.title !== undefined) heading.textContent = options.title;
+      if (options.closeLabel !== undefined) closeButton.setAttribute("aria-label", options.closeLabel);
+      if (options.content !== undefined && options.content !== currentContent) {
+        const focused = document.activeElement instanceof HTMLElement && currentContent.contains(document.activeElement)
+          ? document.activeElement.dataset.focusKey
+          : undefined;
+        currentContent.parentNode?.replaceChild(options.content, currentContent);
+        currentContent = options.content;
+        if (focused) {
+          const replacement = Array.from(panel.querySelectorAll<HTMLElement>("[data-focus-key]")).find(
+            (element) => element.dataset.focusKey === focused,
+          );
+          replacement?.focus();
+        }
+      }
+    },
+  };
   activeDialog = handle;
   return handle;
 }
@@ -137,6 +158,13 @@ export function openConfirm({
   content.append(text, actions);
 
   const dialog = openDialog({ title, content, closeLabel, onClose });
+  const updateDialog = dialog.update.bind(dialog);
+  dialog.update = (options) => {
+    updateDialog(options);
+    if (options.message !== undefined) text.textContent = options.message;
+    if (options.confirmLabel !== undefined) confirm.textContent = options.confirmLabel;
+    if (options.cancelLabel !== undefined) cancel.textContent = options.cancelLabel;
+  };
   cancel.addEventListener("click", dialog.close);
   confirm.addEventListener("click", () => {
     onConfirm();

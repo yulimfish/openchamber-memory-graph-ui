@@ -44,6 +44,11 @@ export function mountMemoryView(root: Element, deps: MemoryViewDeps): MemoryView
   let tagOptions: SelectOption[] = [];
   let rowSignature = "";
   let detailDialog: DialogHandle | null = null;
+  let formDialog: DialogHandle | null = null;
+  let confirmDialog: DialogHandle | null = null;
+  let formRefresh: (() => void) | null = null;
+  let confirmTitle: (() => string) | null = null;
+  let confirmMessage: (() => string) | null = null;
 
   const text = (): Messages => deps.strings(latest?.locale ?? "en");
 
@@ -179,7 +184,7 @@ export function mountMemoryView(root: Element, deps: MemoryViewDeps): MemoryView
     const makeField = (labelText: string, input: HTMLElement) => {
       const label = document.createElement("label");
       label.className = "memory-form__label";
-      label.textContent = labelText;
+      label.append(document.createTextNode(labelText));
       label.append(input);
       return label;
     };
@@ -211,15 +216,19 @@ export function mountMemoryView(root: Element, deps: MemoryViewDeps): MemoryView
     actionsRow.append(cancel, save);
 
     let containerTagInput: HTMLInputElement | undefined;
+    let containerField: HTMLLabelElement | undefined;
     if (!editing) {
       containerTagInput = document.createElement("input");
       containerTagInput.className = "memory-form__input";
       containerTagInput.type = "text";
-      content.append(makeField(t.formContainerTag, containerTagInput));
+      containerField = makeField(t.formContainerTag, containerTagInput);
+      content.append(containerField);
     }
+    const contentField = makeField(t.formContent, contentArea);
+    const tagsField = makeField(t.formTags, tagInput);
     content.append(
-      makeField(t.formContent, contentArea),
-      makeField(t.formTags, tagInput),
+      contentField,
+      tagsField,
       error,
       actionsRow,
     );
@@ -228,24 +237,48 @@ export function mountMemoryView(root: Element, deps: MemoryViewDeps): MemoryView
       title: editing ? t.edit : t.addMemory,
       content,
       closeLabel: t.close,
+      onClose: () => {
+        if (formDialog === dialog) {
+          formDialog = null;
+          formRefresh = null;
+        }
+      },
     });
+    formDialog = dialog;
+    let validationKey: "validationTag" | "validationContent" | null = null;
+    const updateField = (field: HTMLLabelElement | undefined, label: string) => {
+      if (field?.firstChild) field.firstChild.textContent = label;
+    };
+    formRefresh = () => {
+      const current = text();
+      dialog.update({ title: editing ? current.edit : current.addMemory, closeLabel: current.close });
+      updateField(containerField, current.formContainerTag);
+      updateField(contentField, current.formContent);
+      updateField(tagsField, current.formTags);
+      cancel.textContent = current.cancelButton;
+      save.textContent = current.save;
+      if (validationKey) error.textContent = current[validationKey];
+    };
     cancel.addEventListener("click", dialog.close);
     save.addEventListener("click", () => {
       const contentValue = contentArea.value.trim();
       const containerValue = containerTagInput?.value.trim() ?? "";
       if (!editing && !containerValue) {
-        error.textContent = t.validationTag;
+        validationKey = "validationTag";
+        error.textContent = text()[validationKey];
         error.hidden = false;
         containerTagInput?.focus();
         return;
       }
       if (!contentValue) {
-        error.textContent = t.validationContent;
+        validationKey = "validationContent";
+        error.textContent = text()[validationKey];
         error.hidden = false;
         contentArea.focus();
         return;
       }
       error.hidden = true;
+      validationKey = null;
       const tags = parseTags(tagInput.value);
       void mutate(
         () =>
@@ -261,12 +294,19 @@ export function mountMemoryView(root: Element, deps: MemoryViewDeps): MemoryView
 
   function confirmDelete(item: MemoryItem): void {
     const t = text();
-    openConfirm({
+    confirmTitle = () => text().confirmDeleteTitle;
+    confirmMessage = () => text().confirmDeleteBody;
+    confirmDialog = openConfirm({
       title: t.confirmDeleteTitle,
       message: t.confirmDeleteBody,
       confirmLabel: t.confirmButton,
       cancelLabel: t.cancelButton,
       closeLabel: t.close,
+      onClose: () => {
+        confirmDialog = null;
+        confirmTitle = null;
+        confirmMessage = null;
+      },
       destructive: true,
       onConfirm: () => void mutate(() => deps.api.deleteMemory(item.id), "deleted"),
     });
@@ -276,12 +316,19 @@ export function mountMemoryView(root: Element, deps: MemoryViewDeps): MemoryView
     const ids = latest?.selectedIds ?? [];
     if (!ids.length) return;
     const t = text();
-    openConfirm({
+    confirmTitle = () => text().confirmBulkDeleteTitle;
+    confirmMessage = () => `${ids.length} — ${text().confirmDeleteBody}`;
+    confirmDialog = openConfirm({
       title: t.confirmBulkDeleteTitle,
       message: `${ids.length} — ${t.confirmDeleteBody}`,
       confirmLabel: t.confirmButton,
       cancelLabel: t.cancelButton,
       closeLabel: t.close,
+      onClose: () => {
+        confirmDialog = null;
+        confirmTitle = null;
+        confirmMessage = null;
+      },
       destructive: true,
       onConfirm: () => void mutate(() => deps.api.bulkDelete(ids), "bulkDeleted"),
     });
@@ -290,12 +337,19 @@ export function mountMemoryView(root: Element, deps: MemoryViewDeps): MemoryView
   function confirmMaintenance(kind: "cleanup" | "dedupe"): void {
     const t = text();
     const cleanup = kind === "cleanup";
-    openConfirm({
+    confirmTitle = () => cleanup ? text().confirmCleanupTitle : text().confirmDeduplicateTitle;
+    confirmMessage = () => cleanup ? text().confirmCleanupBody : text().confirmDeduplicateBody;
+    confirmDialog = openConfirm({
       title: cleanup ? t.confirmCleanupTitle : t.confirmDeduplicateTitle,
       message: cleanup ? t.confirmCleanupBody : t.confirmDeduplicateBody,
       confirmLabel: t.confirmButton,
       cancelLabel: t.cancelButton,
       closeLabel: t.close,
+      onClose: () => {
+        confirmDialog = null;
+        confirmTitle = null;
+        confirmMessage = null;
+      },
       destructive: true,
       onConfirm: () =>
         void mutate(
@@ -517,6 +571,26 @@ export function mountMemoryView(root: Element, deps: MemoryViewDeps): MemoryView
       const dialog = detailDialog;
       detailDialog = null;
       dialog.close();
+    }
+    if (state.selectedMemoryId && detailDialog) {
+      const item = selectedItem(state.selectedMemoryId);
+      if (item) detailDialog.update({
+        title: t.details,
+        closeLabel: t.close,
+        content: buildDetailContent(item, t, state.locale),
+      });
+    }
+
+    formRefresh?.();
+    if (confirmDialog && confirmTitle && confirmMessage) {
+      const current = text();
+      confirmDialog.update({
+        title: confirmTitle(),
+        message: confirmMessage(),
+        confirmLabel: current.confirmButton,
+        cancelLabel: current.cancelButton,
+        closeLabel: current.close,
+      });
     }
 
     void loadTags();

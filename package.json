@@ -5,7 +5,7 @@
   "license": "MIT",
   "type": "module",
   "dependencies": {
-    "@openchamber/sdk": "1.24.2",
+    "@openchamber/sdk": "2.5.2",
     "vis-network": "10.1.2"
   },
   "devDependencies": {

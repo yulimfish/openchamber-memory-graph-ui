@@ -1,6 +1,7 @@
 import { mountBanner, mountButton, mountEmpty, mountSpinner, type ButtonHandle } from "@openchamber/sdk/ui";
 import { MemoryApiError, type MemoryApi } from "./api";
 import { errorCopy, type Messages } from "./i18n";
+import { formatDate } from "./detail";
 import type { AppState } from "./state";
 import type { ProfileSignal, ProfileWorkflow, UserProfile } from "./types";
 
@@ -36,14 +37,22 @@ export function groupProfileItems<T extends { category?: string }>(
     .sort((a, b) => b.items.length - a.items.length);
 }
 
-export function formatConfidence(value: number | undefined): string | null {
+export function formatCount(value: number | undefined, locale: string): string | null {
   if (value === undefined || !Number.isFinite(value)) return null;
-  return `${Math.round(value * 100)}%`;
+  return new Intl.NumberFormat(locale === "zh" ? "zh-CN" : "en-US").format(value);
 }
 
-export function formatAlphaBeta(alpha: number | undefined, beta: number | undefined): string | null {
+export function formatConfidence(value: number | undefined, locale = "en"): string | null {
+  if (value === undefined || !Number.isFinite(value)) return null;
+  return new Intl.NumberFormat(locale === "zh" ? "zh-CN" : "en-US", {
+    style: "percent",
+    maximumFractionDigits: 0,
+  }).format(value);
+}
+
+export function formatAlphaBeta(alpha: number | undefined, beta: number | undefined, locale = "en"): string | null {
   if (alpha === undefined || beta === undefined) return null;
-  return `${alpha}/${beta}`;
+  return `${formatCount(alpha, locale)}/${formatCount(beta, locale)}`;
 }
 
 export function mountProfileView(root: Element, deps: ProfileViewDeps): ProfileViewHandle {
@@ -124,9 +133,9 @@ export function mountProfileView(root: Element, deps: ProfileViewDeps): ProfileV
 
   function signalStats(item: ProfileSignal): string[] {
     const stats: string[] = [];
-    const confidence = formatConfidence(item.confidence);
+    const confidence = formatConfidence(item.confidence, locale);
     if (confidence) stats.push(confidence);
-    const alphaBeta = formatAlphaBeta(item.alpha, item.beta);
+    const alphaBeta = formatAlphaBeta(item.alpha, item.beta, locale);
     if (alphaBeta) stats.push(alphaBeta);
     if (item.pendingValidation) stats.push("…");
     return stats;
@@ -229,8 +238,8 @@ export function mountProfileView(root: Element, deps: ProfileViewDeps): ProfileV
         summary.append(span);
       };
       addMeta(t.profileVersion, profile.version);
-      addMeta(t.profileAnalyzed, profile.lastAnalyzedAt);
-      addMeta(t.profilePrompts, profile.totalPromptsAnalyzed);
+      addMeta(t.profileAnalyzed, profile.lastAnalyzedAt ? formatDate(profile.lastAnalyzedAt, locale) : undefined);
+      addMeta(t.profilePrompts, formatCount(profile.totalPromptsAnalyzed, locale) ?? undefined);
     }
 
     const showSpinner = status === "loading" || status === "refreshing";

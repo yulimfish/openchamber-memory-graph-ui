@@ -47,6 +47,7 @@ export function mountGraphView(root: Element, deps: GraphViewDeps): GraphViewHan
   let revealTimer: ReturnType<typeof setTimeout> | null = null;
   let themeKey = "";
   let detailDialog: DialogHandle | null = null;
+  let detailNodeId: string | null = null;
   let revealed = false;
   let errorCode = "";
 
@@ -246,7 +247,24 @@ export function mountGraphView(root: Element, deps: GraphViewDeps): GraphViewHan
     const node = fullModel?.nodes.find((entry) => entry.id === nodeId);
     if (!node) return;
     const t = text();
-    const content = buildDetailContent(node.item, t, latest?.locale ?? "en");
+    const content = buildNodeDetailContent(nodeId, t, latest?.locale ?? "en");
+    detailNodeId = nodeId;
+    detailDialog = openDialog({
+      title: t.details,
+      content,
+      closeLabel: t.close,
+      kind: "drawer",
+      onClose: () => {
+        detailDialog = null;
+        detailNodeId = null;
+      },
+    });
+  }
+
+  function buildNodeDetailContent(nodeId: string, t: Messages, locale: string): HTMLElement {
+    const node = fullModel?.nodes.find((entry) => entry.id === nodeId);
+    if (!node) return document.createElement("div");
+    const content = buildDetailContent(node.item, t, locale);
     const neighbors = neighborsOf(nodeId);
     if (neighbors.length) {
       const section = document.createElement("section");
@@ -259,6 +277,7 @@ export function mountGraphView(root: Element, deps: GraphViewDeps): GraphViewHan
         const button = document.createElement("button");
         button.type = "button";
         button.className = "memory-graph__related-button";
+        button.dataset.focusKey = neighbor.id;
         button.textContent = neighbor.label;
         button.addEventListener("click", () => {
           network?.selectNodes([neighbor.id]);
@@ -270,15 +289,7 @@ export function mountGraphView(root: Element, deps: GraphViewDeps): GraphViewHan
       section.append(heading, list);
       content.append(section);
     }
-    detailDialog = openDialog({
-      title: t.details,
-      content,
-      closeLabel: t.close,
-      kind: "drawer",
-      onClose: () => {
-        detailDialog = null;
-      },
-    });
+    return content;
   }
 
   async function fetchGraph(force: boolean): Promise<void> {
@@ -328,6 +339,14 @@ export function mountGraphView(root: Element, deps: GraphViewDeps): GraphViewHan
 
   function update(state: AppState): void {
     latest = state;
+    if (detailDialog && detailNodeId) {
+      const t = text();
+      detailDialog.update({
+        title: t.details,
+        closeLabel: t.close,
+        content: buildNodeDetailContent(detailNodeId, t, state.locale),
+      });
+    }
     if (state.activeView !== "graph") return;
     const nextThemeKey = document.documentElement.dataset.ocTheme ?? "";
     if (network && fullModel && nextThemeKey && nextThemeKey !== themeKey) {

@@ -5,7 +5,7 @@
     "": {
       "name": "openchamber-memory-graph-ui",
       "dependencies": {
-        "@openchamber/sdk": "1.24.2",
+        "@openchamber/sdk": "2.5.2",
         "vis-network": "10.1.2",
       },
       "devDependencies": {
@@ -17,7 +17,7 @@
   "packages": {
     "@egjs/hammerjs": ["@egjs/hammerjs@2.0.17", "", { "dependencies": { "@types/hammerjs": "^2.0.36" } }, "sha512-XQsZgjm2EcVUiZQf11UBJQfmZeEmOW8DpI1gsFeln6w0ae0ii4dMQEQ0kjl6DspdWX1aGY1/loyXnP0JS06e/A=="],
 
-    "@openchamber/sdk": ["@openchamber/sdk@1.24.2", "", { "dependencies": { "zod": "^4.3.6" }, "bin": { "openchamber-guest-bundle": "scripts/bundle-guest.ts" } }, "sha512-UgzW6PUOUb3MUehEbb/fA64pW/3D9kTr7k18a/24ECnQ/OkRyle09wj+pXGX/IiKxYeJCnv0Y3G27R6oZP9PjQ=="],
+    "@openchamber/sdk": ["@openchamber/sdk@2.5.2", "", { "dependencies": { "zod": "^4.3.6" }, "bin": { "openchamber-guest-bundle": "scripts/bundle-guest.ts" } }, "sha512-pywgikcKQZ9SfM43ay34NPPUm4fDOlgDtGDXcc8sTEibMubrZaYBoeMlk6IlEErJMP9+tDZSfx+jJFZU5n0saA=="],
 
     "@types/hammerjs": ["@types/hammerjs@2.0.46", "", {}, "sha512-ynRvcq6wvqexJ9brDMS4BnBLzmr0e14d6ZJTEShTBWKymQiHwlAyGu0ZPEFI2Fh1U53F7tN9ufClWM5KvqkKOw=="],
 
