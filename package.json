@@ -29,7 +29,7 @@
       "panel": {
         "id": "openchamber-memory-graph-ui",
         "name": "Memory Graph",
-        "icon": "share",
+        "icon": "database-2",
         "entry": "panel/index.html"
       },
       "page": true,
